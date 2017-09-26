@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Chagne here for your project
+package=github.com/mikunalpha/hello
+output=hello
+
+# Do not modify here if you do not know about it
+vendor=$PWD/vendor
+tmpvendor=$PWD/.vendor
+gopath=$PWD/.gopath
+
+if [ $# -eq 0 ]; then
+  echo "USAGE:"
+  echo "  mikungo [command] [arguments...]"
+  echo ""
+  echo "COMMANDS:"
+  echo "  init              Initialize a new project."
+  echo "  up                Update a project's dependencies."
+  echo "  get    [package]  Install a package."
+  echo "  rm     [package]  Remove a dependent package."
+  echo "  build             Build output file."
+  echo "  clean             Clean all mikungo files."
+  exit
+fi
+
+if [ ! -d "$vendor" ]; then
+  mkdir -p $vendor;
+fi
+
+if [ ! -d "$gopath" ]; then
+  mkdir $gopath && ln -sf $vendor $gopath/src
+fi
+
+if [ "$1" == "init" ]; then
+  echo "Initializing..."
+  glide create --skip-import --non-interactive
+	echo "ignore:" >> glide.yaml
+	echo "- "$package >> glide.yaml
+	echo "excludeDirs:" >> glide.yaml
+	echo "- .git" >> glide.yaml
+	echo "- node_modules" >> glide.yaml
+	glide install --skip-test --strip-vendor
+	# mkdir $gopath && ln -sf $vendor $gopath/src
+	if [ ! -d "$vendor/$package" ]; then
+    mkdir -p $vendor/$package;
+  fi
+	rm -rf $vendor/$package
+	ln -sf $PWD $vendor/$package
+elif [ "$1" == "get" ]; then
+  if [ $# -ne 2 ]; then
+    echo "Usage: mikungo get [package]"
+    exit
+  fi
+  echo "Getting..."
+  glide get $2
+	mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
+	if [ ! -d "$tmpvendor/$package" ]; then
+    mkdir -p $tmpvendor/$package;
+  fi
+	rm -rf $tmpvendor/$package
+	ln -sf $PWD $tmpvendor/$package
+	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
+elif [ "$1" == "up" ]; then
+  echo "Updating..."
+  glide up
+	mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
+	if [ ! -d "$tmpvendor/$package" ]; then
+    mkdir -p $tmpvendor/$package;
+  fi
+	rm -rf $tmpvendor/$package
+	ln -sf $PWD $tmpvendor/$package
+	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
+elif [ "$1" == "rm" ]; then
+  if [ $# -ne 2 ]; then
+    echo "Usage: mikungo rm [package]"
+    exit
+  fi
+  echo "Removing..."
+  glide rm $2
+	mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
+	if [ ! -d "$tmpvendor/$package" ]; then
+    mkdir -p $tmpvendor/$package;
+  fi
+	rm -rf $tmpvendor/$package
+	ln -sf $PWD $tmpvendor/$package
+	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
+elif [ "$1" == "test" ]; then
+  echo "Testing..."
+  mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
+	env GOPATH=$PWD/.gopath CGO_ENABLED=0 go test -v $(glide novendor)
+	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
+elif [ "$1" == "build" ]; then
+  echo "Building..."
+  mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
+	env GOPATH=$PWD/.gopath CGO_ENABLED=0 go build -o $output
+	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
+elif [ "$1" == "clean" ]; then
+  echo "Cleaning..."
+  rm -rf glide.yaml glide.lock .gopath vendor $output
+fi

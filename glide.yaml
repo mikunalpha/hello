@@ -1,0 +1,8 @@
+package: .
+import:
+- package: github.com/gin-gonic/gin
+ignore:
+- github.com/mikunalpha/hello
+excludeDirs:
+- .git
+- node_modules
