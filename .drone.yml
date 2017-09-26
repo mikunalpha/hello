@@ -2,8 +2,6 @@ pipeline:
   build:  
     image: devtransition/golang-glide
     commands:
-      - git clone https://github.com/mikunalpha/hello.git
-      - cd hello
       - chmod a+x mikungo
       - ./mikungo up
       - ./mikungo test
