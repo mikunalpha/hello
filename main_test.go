@@ -22,8 +22,8 @@ func TestHelloApi(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response.Code)
 
-	if body := response.Body.String(); body != "{\"msg\":\"Hello Foo\"}" {
-		t.Errorf("Expected '{\"msg\":\"Hello Foo\"}'. Got '%s'.", body)
+	if body := response.Body.String(); body != "{\"msg\":\"Hello Bar\"}" {
+		t.Errorf("Expected '{\"msg\":\"Hello Bar\"}'. Got '%s'.", body)
 	}
 }
 
