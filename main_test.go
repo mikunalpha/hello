@@ -15,6 +15,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+// Test hello api without Router.Run()
 func TestHelloApi(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/hello/Foo", nil)
 	response := executeRequest(req)
