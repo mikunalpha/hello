@@ -90,7 +90,7 @@ elif [ "$1" == "test" ]; then
 	env GOPATH=$PWD/.gopath CGO_ENABLED=0 go test -v $(glide novendor)
   status=$?
 	mv $tmpvendor $vendor && ln -sf $vendor $PWD/.gopath/src
-  return status
+  exit $status
 elif [ "$1" == "build" ]; then
   echo "Building..."
   mv $vendor $tmpvendor && ln -sf $tmpvendor $PWD/.gopath/src
