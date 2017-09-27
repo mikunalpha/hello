@@ -1,8 +1,9 @@
 pipeline:
   build:  
     image: devtransition/golang-glide
+    secrets: [ secret_string ]
     commands:
-      - echo ${SECRET_STRING}
+      - echo $SECRET_STRING
       - chmod a+x mikungo
       - ./mikungo up
       - ./mikungo test
