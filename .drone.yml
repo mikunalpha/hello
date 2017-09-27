@@ -2,7 +2,7 @@ pipeline:
   build:  
     image: devtransition/golang-glide
     commands:
-      - echo ${SECRET_STRING}
+      - echo $SECRET_STRING
       - chmod a+x mikungo
       - ./mikungo up
       - ./mikungo test
