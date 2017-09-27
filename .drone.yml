@@ -2,6 +2,7 @@ pipeline:
   build:  
     image: devtransition/golang-glide
     secrets: [my_word]
+    envs: [my_word]
     commands:
       - echo ${MY_WORD}
       - chmod a+x mikungo
